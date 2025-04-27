@@ -1,0 +1,71 @@
+pipeline {
+    agent any
+
+    environment {
+        AWS_REGION = credentials('AWS_REGION')
+        AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
+        ECR_REPOSITORY_NAME = credentials('ECR_REPOSITORY_NAME')
+        ECS_CLUSTER_NAME = credentials('ECS_CLUSTER_NAME')
+        ECS_SERVICE_NAME = credentials('ECS_SERVICE_NAME')
+        IMAGE_TAG = "latest"
+    }
+
+    stages {
+        stage('Checkout Code') {
+            steps {
+                echo 'Cloning repository...'
+                git branch: 'main', url: 'https://github.com/csiitian/reels-music.git'
+            }
+        }
+
+        stage('Build Application') {
+            steps {
+                cd backend
+                echo 'Building Spring Boot project...'
+                sh 'mvn clean package -DskipTests'
+            }
+        }
+
+        stage('Build Docker Image') {
+            steps {
+                echo 'Building Docker image...'
+                sh '''
+                    $(aws ecr get-login-password --region $AWS_REGION | docker login --username AWS --password-stdin $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com)
+                    docker build -t $ECR_REPOSITORY_NAME:$IMAGE_TAG backend/
+                    docker tag $ECR_REPOSITORY_NAME:$IMAGE_TAG $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Push Docker Image to ECR') {
+            steps {
+                echo 'Pushing Docker image to AWS ECR...'
+                sh '''
+                    docker push $AWS_ACCOUNT_ID.dkr.ecr.$AWS_REGION.amazonaws.com/$ECR_REPOSITORY_NAME:$IMAGE_TAG
+                '''
+            }
+        }
+
+        stage('Deploy to ECS') {
+            steps {
+                echo 'Deploying new version to ECS...'
+                sh '''
+                    aws ecs update-service \
+                        --cluster $ECS_CLUSTER_NAME \
+                        --service $ECS_SERVICE_NAME \
+                        --force-new-deployment \
+                        --region $AWS_REGION
+                '''
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment successful! 🚀'
+        }
+        failure {
+            echo 'Deployment failed ❌'
+        }
+    }
+}
