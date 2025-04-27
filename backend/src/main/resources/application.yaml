@@ -1,0 +1,18 @@
+spring:
+    datasource:
+        url: jdbc:postgresql://springboot-project-database.cdq24ie048jx.ap-south-1.rds.amazonaws.com:5432/reels_music?createDatabaseIfNotExist=true
+        username: postgres
+        password: password
+        driver-class-name: org.postgresql.Driver
+    servlet:
+        multipart:
+            max-file-size: 10MB
+            max-request-size: 10MB
+
+aws:
+    access: ${AWS_ACCESS:}
+    secret: ${AWS_SECRET:}
+    account-no: ${AWS_ACCOUNT_NO:}
+    s3:
+        bucket: ${S3_BUCKET:reels-music-bucket}
+        region: ${S3_REGION:ap-south-1}
