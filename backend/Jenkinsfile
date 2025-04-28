@@ -20,7 +20,7 @@ pipeline {
 
         stage('Build Application') {
             steps {
-                cd backend
+                sh 'cd backend'
                 echo 'Building Spring Boot project...'
                 sh 'mvn clean package -DskipTests'
             }
