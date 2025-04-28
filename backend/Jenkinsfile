@@ -2,25 +2,26 @@ pipeline {
     agent any
 
     environment {
-        AWS_REGION = credentials('AWS_REGION')
+        AWS_REGION = 'ap-south-1'
         AWS_ACCOUNT_ID = credentials('AWS_ACCOUNT_ID')
-        ECR_REPOSITORY_NAME = credentials('ECR_REPOSITORY_NAME')
-        ECS_CLUSTER_NAME = credentials('ECS_CLUSTER_NAME')
-        ECS_SERVICE_NAME = credentials('ECS_SERVICE_NAME')
+        ECR_REPOSITORY_NAME = 'reels-music-backend'
+        ECS_CLUSTER_NAME = 'reels-music-app'
+        ECS_SERVICE_NAME = 'reels-music-backend-service'
+        BRANCH_NAME = 'main'
     }
 
     stages {
         stage('Checkout Code') {
             steps {
                 echo 'Cloning repository...'
-                git branch: 'main', url: 'https://github.com/csiitian/reels-music.git'
+                git branch: env.BRANCH_NAME, url: 'https://github.com/csiitian/reels-music.git'
             }
         }
 
         stage('Initialize') {
             steps {
                 script {
-                    env.IMAGE_TAG = "develop-${env.BUILD_NUMBER}"
+                    env.IMAGE_TAG = "${env.BRANCH_NAME}-${env.BUILD_NUMBER}"
                 }
             }
         }
