@@ -1,6 +1,6 @@
 spring:
     datasource:
-        url: jdbc:postgresql://springboot-project-database.cdq24ie048jx.ap-south-1.rds.amazonaws.com:5432/reels_music?createDatabaseIfNotExist=true
+        url: jdbc:postgresql://test-database.cdq24ie048jx.ap-south-1.rds.amazonaws.com:5432/reels_music
         username: postgres
         password: password
         driver-class-name: org.postgresql.Driver
