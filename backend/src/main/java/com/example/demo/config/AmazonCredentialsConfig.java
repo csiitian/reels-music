@@ -4,9 +4,8 @@ import com.example.demo.properties.AwsProperties;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 
 @Configuration
 @RequiredArgsConstructor
@@ -16,10 +15,6 @@ public class AmazonCredentialsConfig {
 
   @Bean("awsCredentials")
   public AwsCredentialsProvider awsCredentials() {
-    AwsBasicCredentials awsBasicCredentials = AwsBasicCredentials.create(
-        awsProperties.getAccess(),
-        awsProperties.getSecret()
-    );
-    return StaticCredentialsProvider.create(awsBasicCredentials);
+    return DefaultCredentialsProvider.create();
   }
 }

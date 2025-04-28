@@ -10,9 +10,6 @@ spring:
             max-request-size: 10MB
 
 aws:
-    access: ${AWS_ACCESS:}
-    secret: ${AWS_SECRET:}
-    account-no: ${AWS_ACCOUNT_NO:}
     s3:
         bucket: ${S3_BUCKET:reels-music-bucket}
         region: ${S3_REGION:ap-south-1}

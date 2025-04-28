@@ -8,10 +8,6 @@ import org.springframework.stereotype.Component;
 @Component
 @ConfigurationProperties("aws")
 public class AwsProperties {
-  private String access;
-  private String secret;
-  private String accountNo;
-
   private S3Properties s3;
 
   @Data
